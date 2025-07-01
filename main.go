@@ -15,6 +15,8 @@ func main() {
 		game.render()
 	}
 
+	game.unloadGame()
+
 	rl.CloseAudioDevice()
 	rl.CloseWindow()
 }

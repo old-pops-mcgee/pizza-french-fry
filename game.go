@@ -1,18 +1,34 @@
 package main
 
-import rl "github.com/gen2brain/raylib-go/raylib"
+import (
+	"embed"
+
+	rl "github.com/gen2brain/raylib-go/raylib"
+)
 
 const WINDOW_WIDTH float32 = 340
 const WINDOW_HEIGHT float32 = 600
 
+//go:embed assets/*
+var ASSETS embed.FS
+
 type Game struct {
-	playerPosition rl.Vector2
+	player       Player
+	music        rl.Sound
+	textureAtlas rl.Texture2D
 }
 
 func initGame() Game {
 	return Game{
-		playerPosition: rl.Vector2{X: WINDOW_WIDTH / 2, Y: 20},
+		player:       initPlayer(),
+		music:        rl.LoadSound("assets/black_diamond.mp3"),
+		textureAtlas: rl.LoadTexture("assets/tilemap_packed.png"),
 	}
+}
+
+func (g *Game) unloadGame() {
+	rl.UnloadSound(g.music)
+	rl.UnloadTexture(g.textureAtlas)
 }
 
 func (g *Game) render() {
@@ -26,7 +42,7 @@ func (g *Game) render() {
 	// Render the monster
 
 	// Render the player
-	rl.DrawCircle(int32(g.playerPosition.X), int32(g.playerPosition.Y), 10.0, rl.Red)
+	g.player.render()
 
 	// Render obstacles
 
@@ -36,25 +52,33 @@ func (g *Game) render() {
 }
 
 func (g *Game) update() {
+	// Loop music if needed
+	if !rl.IsSoundPlaying(g.music) {
+		rl.PlaySound(g.music)
+	}
+
 	// Update map
+
+	// Update player
+	g.player.update()
 }
 
 func (g *Game) handleInput() {
 	// Handle touch controls
 	if rl.GetTouchPointCount() > 0 {
 		touchPos := rl.GetTouchPosition(0)
-		if touchPos.X > g.playerPosition.X {
-			g.playerPosition.X += float32(PLAYER_HORIZONTAL_SPEED)
+		if touchPos.X > g.player.position.X {
+			g.player.moveRight = true
 		} else {
-			g.playerPosition.X -= float32(PLAYER_HORIZONTAL_SPEED)
+			g.player.moveLeft = true
 		}
 	}
 
 	// Handle arrow controls
 	if rl.IsKeyDown(rl.KeyRight) {
-		g.playerPosition.X += float32(PLAYER_HORIZONTAL_SPEED)
+		g.player.moveRight = true
 	}
 	if rl.IsKeyDown(rl.KeyLeft) {
-		g.playerPosition.X -= float32(PLAYER_HORIZONTAL_SPEED)
+		g.player.moveLeft = true
 	}
 }

@@ -33,5 +33,6 @@ go.work.sum
 
 # Project files
 app
+app.exe
 Raylib-Go-Wasm
 server
