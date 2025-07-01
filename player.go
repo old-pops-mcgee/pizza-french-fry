@@ -2,12 +2,13 @@ package main
 
 import rl "github.com/gen2brain/raylib-go/raylib"
 
-const PLAYER_HORIZONTAL_SPEED int = 10
+const PLAYER_HORIZONTAL_SPEED int = 5
 
 type Player struct {
-	position  rl.Vector2
-	moveRight bool
-	moveLeft  bool
+	position      rl.Vector2
+	verticalSpeed float32
+	moveRight     bool
+	moveLeft      bool
 }
 
 func initPlayer() Player {
@@ -16,8 +17,9 @@ func initPlayer() Player {
 			X: WINDOW_WIDTH / 2,
 			Y: WINDOW_HEIGHT/2 - 40,
 		},
-		moveRight: false,
-		moveLeft:  false,
+		verticalSpeed: 3,
+		moveRight:     false,
+		moveLeft:      false,
 	}
 }
 
@@ -30,11 +32,11 @@ func (p *Player) update() {
 		}
 	}
 
-	p.position = rl.Vector2Clamp(p.position, rl.Vector2{X: 0, Y: 0}, rl.Vector2{X: WINDOW_WIDTH, Y: WINDOW_HEIGHT})
+	p.position = rl.Vector2Clamp(p.position, rl.Vector2{X: 0, Y: 0}, rl.Vector2{X: WINDOW_WIDTH - 16, Y: WINDOW_HEIGHT})
 	p.moveLeft = false
 	p.moveRight = false
 }
 
 func (p *Player) render() {
-	rl.DrawCircle(int32(p.position.X), int32(p.position.Y), 10.0, rl.Red)
+	rl.DrawRectangle(int32(p.position.X), int32(p.position.Y), 16, 16, rl.Blue)
 }
