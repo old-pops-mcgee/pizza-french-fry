@@ -9,11 +9,7 @@ func main() {
 
 	game := initGame()
 
-	for !rl.WindowShouldClose() {
-		game.handleInput()
-		game.update()
-		game.render()
-	}
+	game.run()
 
 	game.unloadGame()
 
